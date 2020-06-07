@@ -1,0 +1,38 @@
+{
+    "SyncResponse": {
+        "RtmpPublishSettings": {
+            "settings": []
+        },
+        "RtmpSettings": {
+            "abr": [],
+            "apps": [
+                {
+                    "app": "rtmp",
+                    "chunk_count": 4,
+                    "dash_template": "TIME",
+                    "duration": 2,
+                    "login": "",
+                    "password": "",
+                    "protocols": [
+                        "RTMP"
+                    ]
+                }
+            ],
+            "chunk_count": 4,
+            "dash_template": "TIME",
+            "duration": 2,
+            "interfaces": [
+                {
+                    "ip": "0.0.0.0",
+                    "port": 1935,
+                    "ssl": false
+                }
+            ],
+            "login": "",
+            "password": "",
+            "protocols": [
+                "RTMP"
+            ]
+        }
+    }
+}
