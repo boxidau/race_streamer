@@ -1,0 +1,82 @@
+import React from 'react'
+import Card from 'react-bootstrap/Card'
+import APIContext from '../api/APIContext'
+import { StreamEndpointStruct } from '../api/ServerAPI'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+
+function RTMPSettings(): React.ReactElement {
+
+    const {api} = React.useContext(APIContext)
+    const [streamEndpoint, setStreamEndpoint] = React.useState<null | StreamEndpointStruct>(null)
+    const [port, setPort] = React.useState("")
+    const [inProgress, setInProgress] = React.useState(false)
+
+    const updatePort = () => {
+        const newPort = parseInt(port)   
+        if (newPort > 65536 || newPort < 1024) {
+            window.alert("Select a port between 1024 and 65536")
+            return
+        }
+        if (window.confirm("Changing the listening port will stop any in progress streams. Are you sure?")) {
+            setInProgress(true)
+            const currentParams = streamEndpoint?.StreamEndpoint
+            if (currentParams == null) {
+                return
+            }
+            
+            api?.setStreamEndpoint({
+                StreamEndpoint: {
+                    ...currentParams,
+                    port: parseInt(port)
+                }
+            })
+            .then(setStreamEndpoint)
+            .finally(() => setInProgress(false))
+        }
+    }
+
+    React.useEffect(
+        () => {
+            api?.getStreamEndpoint().then(r => {
+                setStreamEndpoint(r)
+                setPort(r.StreamEndpoint.port.toString())
+            })
+        }, [api]
+    )
+
+
+    return (
+        <Card>
+            <Card.Header>RTMP Listener Settings</Card.Header>
+            <Card.Body>
+                <FontAwesomeIcon icon="crosshairs" />
+                {' '}{streamEndpoint?.StreamEndpoint.proto}://{api?.host}:{streamEndpoint?.StreamEndpoint.port}/{streamEndpoint?.StreamEndpoint.path}
+                <div style={{marginTop: "20px"}}>
+                    <Form>
+                        <Form.Row as={Row}>
+                            <Col sm="auto">
+                                <Form.Label column>Listening Port</Form.Label>
+                            </Col>
+                            <Col sm="auto">
+                                <Form.Control type="text" value={port} onChange={ev => {setPort(ev.target.value)}}/>
+                            </Col>
+                            <Col sm="auto">
+                                <Button variant="warning" disabled={inProgress} onClick={updatePort}>
+                                    Update Port
+                                </Button>
+                            </Col>
+                        </Form.Row>
+                    </Form>
+                </div>
+            </Card.Body>
+        </Card>
+    )
+}
+
+export default RTMPSettings

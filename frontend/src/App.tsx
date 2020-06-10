@@ -1,0 +1,42 @@
+import React from 'react';
+import './App.css';
+import Setup from './components/Setup'
+import ServerInfo from './components/ServerInfo'
+import type { ServerConfig } from './api/ServerAPI'
+import ServerAPI from './api/ServerAPI'
+import APIContext from './api/APIContext';
+
+function App() {
+
+  const [serverConfig, setServerConfig] = React.useState<ServerConfig | null>({host: "localhost", port: 5000, proto: "http"});
+
+  const disconnect = () => {
+    setServerConfig(null)
+  }
+
+  let display = null;
+  let api = null;
+
+  if (serverConfig === null) {
+    display = (
+      <div style={{ padding: "20px" }}>
+        <Setup onSetServer={setServerConfig} />
+      </div>
+    )
+  } else {
+    api = new ServerAPI(serverConfig)
+    display = (
+      <APIContext.Provider value={{api, disconnect}}>
+        <ServerInfo />
+      </APIContext.Provider>
+    )
+  }
+
+  return (
+    <div className="Container">
+      {display}
+    </div>
+  );
+}
+
+export default App;
