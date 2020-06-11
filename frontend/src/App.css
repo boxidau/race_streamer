@@ -1,12 +1,19 @@
 .Container {
   text-align: left;
   min-height: 100vh;
+  background: #222;
+  
 }
 
 .App {
   padding: 20px;
+  
 }
 
 .App > div.card {
   margin-bottom: 20px;
+}
+
+.ui.modals.dimmer .ui.modal .form label {
+  color: white !important;
 }
