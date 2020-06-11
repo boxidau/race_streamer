@@ -1,10 +1,8 @@
 import React from 'react'
 
-import Card from 'react-bootstrap/Card'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { RTMPStreamInfoStruct, RTMPIncomingStreamStats, RTMPRepublishStream } from '../api/ServerAPI'
-import { Image, List, Item } from 'semantic-ui-react'
+import { Card, List, Item } from 'semantic-ui-react'
 import TimeAgo from 'react-timeago'
 
 type Props = {
@@ -34,7 +32,7 @@ function IncomingStreamStats(props: { stats: null | RTMPIncomingStreamStats }): 
                 </div>
                 <List.Content>
                     <List.Header>Stream Bitrate</List.Header>
-                    {((props.stats?.bandwidth || 0) / 1024 / 1024).toFixed(2)} mbps
+                    {((props.stats?.bandwidth ?? 0) / 1024 / 1024).toFixed(2)} mbps
                 </List.Content>
             </List.Item>
             <List.Item>
@@ -43,7 +41,7 @@ function IncomingStreamStats(props: { stats: null | RTMPIncomingStreamStats }): 
                 </div>
                 <List.Content>
                     <List.Header>Resolution</List.Header>
-                    {props.stats?.resolution || "N/A"}
+                    {props.stats?.resolution ?? "N/A"}
                 </List.Content>
             </List.Item>
             <List.Item>
@@ -52,11 +50,11 @@ function IncomingStreamStats(props: { stats: null | RTMPIncomingStreamStats }): 
                 </div>
                 <List.Content>
                     <List.Header>Elapsed Time</List.Header>
-                    {props.stats &&
+                    {props.stats ?
                         <TimeAgo
                             formatter={(v, u) => `${v} ${u}s`}
                             date={new Date(props.stats.publish_time * 1000)}
-                        /> || "N/A"}
+                        /> : "N/A"}
                 </List.Content>
             </List.Item>
         </List>
@@ -76,7 +74,7 @@ function RepublishStreamInfo(props: RepublishStreamInfo): React.ReactElement {
         </List.Item>
     )
 
-    if (props.stream.stats?.state == 'connected') {
+    if (props.stream.stats?.state === 'connected') {
         connected = true
         connectionStatus = (
             <List.Item>
@@ -164,7 +162,7 @@ function StreamInfo(props: Props): React.ReactElement {
                 <FontAwesomeIcon icon="key" style={{ marginRight: "10px" }} />
                 {props.streamKey}
             </Card.Header>
-            <Card.Body>
+            <Card.Content>
                 <h4>Incoming Stream</h4>
                 <IncomingStreamStats stats={props.streamInfo.incoming_stream_stats} />
 
@@ -172,7 +170,7 @@ function StreamInfo(props: Props): React.ReactElement {
                 <Item.Group>
                     {outgoingStreams}
                 </Item.Group>
-            </Card.Body>
+            </Card.Content>
         </Card>
     )
 }

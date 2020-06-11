@@ -1,5 +1,5 @@
 import React from 'react'
-import Navbar from 'react-bootstrap/Navbar'
+import { Menu, Icon } from 'semantic-ui-react'
 import ServerConnection from './ServerConnection'
 import ServerStatus from './ServerStatus'
 import RTMPSettings from './RTMPSettings'
@@ -9,13 +9,14 @@ import RepublishSettings from './RepublishSettings'
 function ServerInfo(): React.ReactElement {
     return (
         <div>
-            <Navbar expand="lg">
-                <Navbar.Brand href="#home">Streamer</Navbar.Brand>
-                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                    <ServerConnection />
-                </Navbar.Collapse>
-                
-            </Navbar>
+            <Menu>
+                <Menu.Item>
+                    <Icon name='video camera' />
+                    <Menu.Header>Race Streamer</Menu.Header>
+                </Menu.Item>
+                <ServerConnection />
+
+            </Menu>
             <div className="App">
                 <ServerStatus />
                 <RTMPSettings />

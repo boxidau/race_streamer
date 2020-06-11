@@ -1,55 +1,55 @@
 import React from 'react'
-import Card from 'react-bootstrap/Card'
+import { Card, List, Progress } from 'semantic-ui-react'
+
 import APIContext from '../api/APIContext'
-import ListGroup from 'react-bootstrap/ListGroup'
 import { ServerStatusStruct } from '../api/ServerAPI'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import ProgressBar from 'react-bootstrap/ProgressBar'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 
 function ServerStatus(): React.ReactElement {
 
-    const {api} = React.useContext(APIContext)
+    const { api } = React.useContext(APIContext)
     const [serverStatusData, setServerStatusData] = React.useState<null | ServerStatusStruct>(null)
-    
+
     React.useEffect(
         () => {
             const fetchStatus = () => api?.getStatus().then(setServerStatusData)
             fetchStatus()
             const timer = window.setInterval(fetchStatus, 5000)
-            return () => {clearInterval(timer)}
+            return () => { clearInterval(timer) }
         },
         [api]
     )
 
 
     return (
-        <Card>
-            <Card.Header>Server Status</Card.Header>
-            <Card.Body>
-            <ListGroup variant="flush">
-                    <ListGroup.Item>
-                        <Row>
-                            <Col md={1}>
-                                <FontAwesomeIcon icon="microchip" /> CPU Load:
-                            </Col>
-                            <Col md={11}>
-                                <div style={{display: "inline-block", width: "100%"}}>
-                                    <ProgressBar variant="success" now={(serverStatusData?.SysInfo.scl || 0) * 100} />
-                                </div>
-                            </Col>
-                        </Row>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                        <FontAwesomeIcon icon="plug" /> Connections: {serverStatusData?.Connections}
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                        <FontAwesomeIcon icon="tachometer-alt" /> Network Egress: {serverStatusData?.OutRate} kbps
-                    </ListGroup.Item>
+        <Card fluid>
+            <Card.Content header="Server Status" />
+            <Card.Content>
+                <List divided relaxed='very'>
+                    <List.Item>
+                        <List.Icon name='microchip' size="large" verticalAlign='middle' />
+                        <List.Content>
+                            <List.Header>CPU Load</List.Header>
+                            <Progress percent={(serverStatusData?.SysInfo.scl || 0) * 100} success />
+                        </List.Content>
+                    </List.Item>
+                    <List.Item>
+                        <List.Icon name='plug' size="large" verticalAlign='middle' />
+                        <List.Content>
+                            <List.Header>Connections</List.Header>
+                            {serverStatusData?.Connections}
+                        </List.Content>
+                    </List.Item>
+                    <List.Item>
+                        <List.Icon name='tachometer alternate' size="large" verticalAlign='middle' />
+                        <List.Content>
+                            <List.Header>network Egress</List.Header>
+                            {serverStatusData?.OutRate} kbps
+                        </List.Content>
+                    </List.Item>
 
-                </ListGroup>
-            </Card.Body>
+
+                </List>
+            </Card.Content>
         </Card>
     )
 }

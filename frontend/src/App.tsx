@@ -8,7 +8,8 @@ import APIContext from './api/APIContext';
 
 function App() {
 
-  const [serverConfig, setServerConfig] = React.useState<ServerConfig | null>({host: "localhost", port: 5000, proto: "http"});
+  const defaultServer = null; // {host: "localhost", port: 5000, proto: "http"}
+  const [serverConfig, setServerConfig] = React.useState<ServerConfig | null>(defaultServer);
 
   const disconnect = () => {
     setServerConfig(null)

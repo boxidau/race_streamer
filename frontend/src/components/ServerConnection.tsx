@@ -1,7 +1,6 @@
 import React from 'react'
-import Button from 'react-bootstrap/Button'
+import { Button, Menu, Icon } from 'semantic-ui-react'
 import APIContext from '../api/APIContext'
-import Form from 'react-bootstrap/Form'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function ServerConnection(): React.ReactElement {
@@ -20,17 +19,19 @@ function ServerConnection(): React.ReactElement {
         [api]
     )
 
-    return <div>
-        <Form inline>
-            <Form.Label style={{paddingRight: "10px"}}>    
-                <FontAwesomeIcon icon="circle" color={connected ? "green" : "yellow"} />{' '}
-                <div style={{paddingLeft: "10px"}}>{api?.serverURI()}</div>
-            </Form.Label>
-            <Button variant="danger" size="sm" onClick={disconnect}>
-                Disconnect
-            </Button>
-        </Form>
-    </div>;
+    return (
+        <Menu.Menu position='right'>  
+            <Menu.Item>
+                <Icon name="circle" color={connected ? "green" : "yellow"} />
+                {api?.serverURI()}
+            </Menu.Item>
+            <Menu.Item>
+                <Button color="red" size="small" onClick={disconnect}>
+                    Disconnect
+                </Button>
+            </Menu.Item>
+        </Menu.Menu>
+    )
 }
 
 export default ServerConnection

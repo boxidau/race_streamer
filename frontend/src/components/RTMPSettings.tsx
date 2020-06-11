@@ -1,24 +1,18 @@
 import React from 'react'
-import Card from 'react-bootstrap/Card'
 import APIContext from '../api/APIContext'
 import { StreamEndpointStruct } from '../api/ServerAPI'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
-
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import { Card, Button, Form, Input } from 'semantic-ui-react'
 
 function RTMPSettings(): React.ReactElement {
 
-    const {api} = React.useContext(APIContext)
+    const { api } = React.useContext(APIContext)
     const [streamEndpoint, setStreamEndpoint] = React.useState<null | StreamEndpointStruct>(null)
     const [port, setPort] = React.useState("")
     const [inProgress, setInProgress] = React.useState(false)
 
     const updatePort = () => {
-        const newPort = parseInt(port)   
+        const newPort = parseInt(port)
         if (newPort > 65536 || newPort < 1024) {
             window.alert("Select a port between 1024 and 65536")
             return
@@ -29,15 +23,15 @@ function RTMPSettings(): React.ReactElement {
             if (currentParams == null) {
                 return
             }
-            
+
             api?.setStreamEndpoint({
                 StreamEndpoint: {
                     ...currentParams,
                     port: parseInt(port)
                 }
             })
-            .then(setStreamEndpoint)
-            .finally(() => setInProgress(false))
+                .then(setStreamEndpoint)
+                .finally(() => setInProgress(false))
         }
     }
 
@@ -50,31 +44,26 @@ function RTMPSettings(): React.ReactElement {
         }, [api]
     )
 
-
     return (
-        <Card>
-            <Card.Header>RTMP Listener Settings</Card.Header>
-            <Card.Body>
+        <Card fluid>
+            <Card.Content header="RTMP Listener Settings" />
+            <Card.Content>
                 <FontAwesomeIcon icon="crosshairs" />
                 {' '}{streamEndpoint?.StreamEndpoint.proto}://{api?.host}:{streamEndpoint?.StreamEndpoint.port}/{streamEndpoint?.StreamEndpoint.path}
-                <div style={{marginTop: "20px"}}>
+                <div style={{ marginTop: "20px" }}>
                     <Form>
-                        <Form.Row as={Row}>
-                            <Col sm="auto">
-                                <Form.Label column>Listening Port</Form.Label>
-                            </Col>
-                            <Col sm="auto">
-                                <Form.Control type="text" value={port} onChange={ev => {setPort(ev.target.value)}}/>
-                            </Col>
-                            <Col sm="auto">
-                                <Button variant="warning" disabled={inProgress} onClick={updatePort}>
-                                    Update Port
-                                </Button>
-                            </Col>
-                        </Form.Row>
+                        <Form.Group>
+                            <Form.Field inline>
+                                <label>Listening Port</label>
+                                <Input type="text" value={port} onChange={ev => { setPort(ev.target.value) }} />
+                            </Form.Field>
+                            <Button color="yellow" disabled={inProgress} onClick={updatePort}>
+                                Update Port
+                            </Button>
+                        </Form.Group>
                     </Form>
                 </div>
-            </Card.Body>
+            </Card.Content>
         </Card>
     )
 }

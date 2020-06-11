@@ -1,11 +1,7 @@
 import React from 'react'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
-import Form from 'react-bootstrap/Form'
+import { Button, Modal, Form } from 'semantic-ui-react'
 import type { ServerProto, ServerConfig } from '../api/ServerAPI'
 import ServerAPI from '../api/ServerAPI'
-import Spinner from 'react-bootstrap/Spinner'
-import Alert from 'react-bootstrap/Alert'
 
 
 type Props = {
@@ -40,76 +36,60 @@ function Setup(props: Props): React.ReactElement {
                 setStatus("FAILED")
             })
     }
-
-    const buttonDisabled = status === "IN_PROGRESS";
-    let buttonContent = (
-        <div>
-            <Spinner
-            as="span"
-            animation="grow"
-            size="sm"
-            role="status"
-            aria-hidden="true"
-            /> Connecting...
-        </div>
-    )
-    if (status !== "IN_PROGRESS") {
-        buttonContent = <div>{'Connect'}</div>
-    }
-
-
+    
     return (
-        <Modal.Dialog>
-            <Modal.Header closeButton>
-                <Modal.Title>Connect to stream server</Modal.Title>
-            </Modal.Header>
+        <Modal open size="small" basic>
+            <Modal.Header>Connect to stream server</Modal.Header>
+            <Modal.Content>
+                <Modal.Description>
+                    <Form>
+                        <Form.Field>
+                            <Form.Input
+                                label="Hostname"
+                                value={host}
+                                onChange={e => { setHost(e.target.value) }}
+                                type="text"
+                            />
+                        </Form.Field>
 
-            <Modal.Body>
-                <Form.Group controlId="hostname">
-                    <Form.Label>Hostname</Form.Label>
-                    <Form.Control
-                        value={host}
-                        onChange={e => { setHost(e.target.value) }}
-                        type="text"
-                    />
-                </Form.Group>
+                        <Form.Field>
+                            <Form.Input label="Port"
+                                value={port}
+                                onChange={e => {
+                                    setPort(parseInt(e.target.value))
+                                }}
+                                type="text"
+                            />
+                        </Form.Field>
 
-                <Form.Group controlId="port">
-                    <Form.Label>Port</Form.Label>
-                    <Form.Control
-                        value={port}
-                        onChange={e => {
-                            setPort(parseInt(e.target.value))
-                        }}
-                        type="text"
-                    />
-                </Form.Group>
+                        <Form.Field>
+                            <Form.Select
+                                label="Protocol"
+                                value={proto}
+                                onChange={(e, { value }) => {
+                                    const proto = value as ServerProto;
+                                    setProto(proto)
+                                }}
+                                options={[
+                                    { text: "http", value: "http" },
+                                    { text: "https", value: "https" }
+                                ]}
+                            />
 
-                <Form.Group controlId="proto">
-                    <Form.Label>Protocol</Form.Label>
-                    <Form.Control
-                        as="select"
-                        value={proto}
-                        onChange={e => {
-                            const value = e.target.value as ServerProto;
-                            setProto(value)
-                        }}
-                    >
-                        <option value="http">http</option>
-                        <option value="https">https</option>
-                    </Form.Control>
-                </Form.Group>
-            </Modal.Body>
-
-            <Modal.Footer>
+                        </Form.Field>
+                    </Form>
+                </Modal.Description>
+            </Modal.Content>
+            <Modal.Actions>
                 <Button
-                    disabled={buttonDisabled}
-                    variant="primary"
-                    onClick={() => checkConnection()}>
-                    {buttonContent}
-                    </Button>
-            </Modal.Footer>
-        </Modal.Dialog>
+                    disabled={status === "IN_PROGRESS"}
+                    primary
+                    onClick={() => checkConnection()}
+                    loading={status === "IN_PROGRESS"}>
+                    Connect
+                </Button>
+            </Modal.Actions>
+        </Modal>
     );
 }
 

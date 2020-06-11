@@ -1,8 +1,7 @@
 import React from 'react'
-import Card from 'react-bootstrap/Card'
 import APIContext from '../api/APIContext'
 import { RTMPPublisherInfoStruct } from '../api/ServerAPI'
-import { List } from 'immutable'
+import { Card } from 'semantic-ui-react'
 import StreamInfo from './StreamInfo'
 
 
@@ -32,11 +31,11 @@ function RepublishSettings(): React.ReactElement {
     }
 
     return (
-        <Card>
-            <Card.Header>RTMP Stream Republishing</Card.Header>
-            <Card.Body>
+        <Card fluid>
+            <Card.Content header="RTMP Stream Republishing" />
+            <Card.Content>
                {streamInfoElements}
-            </Card.Body>
+            </Card.Content>
         </Card>
     )
 }
