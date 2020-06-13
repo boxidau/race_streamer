@@ -39,7 +39,6 @@ def connection_check():
 @app.route("/status")
 @hmac.auth()
 def status():
-    print(request.data)
     return api.server_status()
 
 
