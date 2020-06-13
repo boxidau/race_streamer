@@ -99,7 +99,6 @@ class Hmac(object):
         abort(self.hmac_error_code)
 
     def _hmac_factory(self, data, key=None):
-        print(self.hmac_key, self.digestmod)
         key = key if key else self.hmac_key
         return hmac.new(six.b(key), data, digestmod=self.digestmod)
 
@@ -147,8 +146,6 @@ class Hmac(object):
         timestamp = self.get_timestamp(request)
 
         signed_data = encode_string(str(timestamp)) + b"::" + request.data
-        print(request.method)
-        print(signed_data)
         hmac_server_tokens = []
 
         if self.hmac_key is not None:
@@ -172,7 +169,6 @@ class Hmac(object):
                 # signature against
                 pass
 
-        print(hmac_server_tokens)
         if signature not in hmac_server_tokens:
             raise InvalidSignature
 
