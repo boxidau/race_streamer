@@ -2,7 +2,7 @@ import React from 'react'
 import { Menu, Icon } from 'semantic-ui-react'
 import ServerConnection from './ServerConnection'
 import ServerStatus from './ServerStatus'
-import RTMPSettings from './RTMPSettings'
+import ListenerSettings from './ListenerSettings'
 import RepublishSettings from './RepublishSettings'
 
 
@@ -19,7 +19,7 @@ function ServerInfo(): React.ReactElement {
             </Menu>
             <div className="App">
                 <ServerStatus />
-                <RTMPSettings />
+                <ListenerSettings />
                 <RepublishSettings />
             </div>
         </div>

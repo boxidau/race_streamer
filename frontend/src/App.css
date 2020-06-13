@@ -14,6 +14,6 @@
   margin-bottom: 20px;
 }
 
-.ui.modals.dimmer .ui.modal .form label {
+.ui.modals.dimmer .ui.modal.basic .form label {
   color: white !important;
 }

@@ -2,13 +2,13 @@ import React from 'react';
 import './App.css';
 import Setup from './components/Setup'
 import ServerInfo from './components/ServerInfo'
-import type { ServerConfig } from './api/ServerAPI'
+import type { ServerConfig, ServerProto} from './api/ServerAPI'
 import ServerAPI from './api/ServerAPI'
 import APIContext from './api/APIContext';
 
 function App() {
 
-  const defaultServer = null; // {host: "localhost", port: 5000, proto: "http"}
+  const defaultServer = {host: "localhost", port: 5000, proto: ("http" as ServerProto), authKey: "0000-0000-0000-0000"}
   const [serverConfig, setServerConfig] = React.useState<ServerConfig | null>(defaultServer);
 
   const disconnect = () => {

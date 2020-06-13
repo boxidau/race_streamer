@@ -12,6 +12,7 @@ type ConnectionCheckStatus = "IN_PROGRESS" | "FAILED" | null
 
 function Setup(props: Props): React.ReactElement {
 
+    const [authKey, setAuthKey] = React.useState<string>("0000-0000-0000-0000")
     const [host, setHost] = React.useState<string>("localhost")
     const [port, setPort] = React.useState<number>(5000)
     const [proto, setProto] = React.useState<ServerProto>("http")
@@ -20,7 +21,7 @@ function Setup(props: Props): React.ReactElement {
 
     const checkConnection = () => {
         setStatus("IN_PROGRESS")
-        const config = { host, port, proto }
+        const config = { host, port, proto, authKey }
         const api = new ServerAPI(config)
         api.connectionCheck()
             .then(r => {
@@ -76,6 +77,16 @@ function Setup(props: Props): React.ReactElement {
                                 ]}
                             />
 
+                        </Form.Field>
+
+                        <Form.Field>
+                            <Form.Input label="Authentication Key"
+                                value={authKey}
+                                onChange={e => {
+                                    setAuthKey(e.target.value)
+                                }}
+                                type="text"
+                            />
                         </Form.Field>
                     </Form>
                 </Modal.Description>

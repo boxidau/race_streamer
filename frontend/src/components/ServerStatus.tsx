@@ -42,7 +42,7 @@ function ServerStatus(): React.ReactElement {
                     <List.Item>
                         <List.Icon name='tachometer alternate' size="large" verticalAlign='middle' />
                         <List.Content>
-                            <List.Header>network Egress</List.Header>
+                            <List.Header>Network Egress</List.Header>
                             {serverStatusData?.OutRate} kbps
                         </List.Content>
                     </List.Item>

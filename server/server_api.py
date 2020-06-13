@@ -2,8 +2,8 @@ import requests
 import config as system_config
 import json
 
-class ServerAPI:
 
+class ServerAPI:
     @property
     def api_base_url(self):
         return f"http://{system_config.API_HOST}:{system_config.API_PORT}/manage"
@@ -20,7 +20,7 @@ class ServerAPI:
     def rtmp_status(self):
         return requests.get(f"{self.api_base_url}/rtmp_status").json()
 
-    def reload_config(self) -> bool:  
+    def reload_config(self) -> bool:
         response = requests.post(f"{self.api_base_url}/reload_config").json()
         if response["status"] == "Ok":
             return True
@@ -38,6 +38,29 @@ class ServerAPI:
     def rules_config(self):
         with open(system_config.RULES_CONF_PATH, "r") as conf_fp:
             return json.loads(conf_fp.read())
+
+    def create_republish_rule(self, rule) -> bool:
+        config_data = self.rules_config()
+        config_data["SyncResponse"]["RtmpPublishSettings"]["settings"].append(rule)
+        return self.update_rules_config(config_data)
+
+    def delete_republish_rules_for_stream(self, stream_key) -> bool:
+        config_data = self.rules_config()
+        config_data["SyncResponse"]["RtmpPublishSettings"]["settings"] = [
+            rule
+            for rule in config_data["SyncResponse"]["RtmpPublishSettings"]["settings"]
+            if rule["src_stream"] != stream_key
+        ]
+        return self.update_rules_config(config_data)
+
+    def delete_republish_rule(self, stream_key, rule_id) -> bool:
+        config_data = self.rules_config()
+        config_data["SyncResponse"]["RtmpPublishSettings"]["settings"] = [
+            rule
+            for rule in config_data["SyncResponse"]["RtmpPublishSettings"]["settings"]
+            if not (rule["src_stream"] == stream_key and rule["id"] == rule_id)
+        ]
+        return self.update_rules_config(config_data)
 
     def update_rules_config(self, config_data):
         with open(system_config.RULES_CONF_PATH, "w") as conf_fp:
@@ -57,7 +80,4 @@ class ServerAPI:
                 "ipv6": ip,
                 "ipv4": ipv4,
             }
-        return {
-            "ipv6": None,
-            "ipv4": ipv4
-        }
+        return {"ipv6": None, "ipv4": ipv4}

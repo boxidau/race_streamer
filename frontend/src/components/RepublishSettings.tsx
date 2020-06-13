@@ -1,8 +1,9 @@
 import React from 'react'
 import APIContext from '../api/APIContext'
-import { RTMPPublisherInfoStruct } from '../api/ServerAPI'
-import { Card } from 'semantic-ui-react'
+import { RTMPPublisherInfoStruct, RTMPStreamStruct } from '../api/ServerAPI'
+import { Card, Loader } from 'semantic-ui-react'
 import StreamInfo from './StreamInfo'
+import AddRepublishDestination from './AddRepublishDestination'
 
 
 function RepublishSettings(): React.ReactElement {
@@ -11,9 +12,10 @@ function RepublishSettings(): React.ReactElement {
     const [publishInfo, setPublishInfo] = React.useState<null | RTMPPublisherInfoStruct>(null)
     const [inProgress, setInProgress] = React.useState(false)
 
+    const fetchStatus = () => api?.getRepublishInfo().then(setPublishInfo)
+
     React.useEffect(
         () => {
-            const fetchStatus = () => api?.getRepublishInfo().then(setPublishInfo)
             fetchStatus()
             const timer = window.setInterval(fetchStatus, 5000)
             return () => {clearInterval(timer)}
@@ -22,17 +24,31 @@ function RepublishSettings(): React.ReactElement {
     )
 
     const streamInfoElements = []
+    const currentStreamKeys = []
     for (const streamKey in publishInfo) {
+        currentStreamKeys.push(streamKey)
         streamInfoElements.push(
             <div key={streamKey} style={{paddingBottom: "10px"}}>
-                <StreamInfo streamKey={streamKey} streamInfo={publishInfo[streamKey]} />
+                <StreamInfo streamKey={streamKey} streamInfo={publishInfo[streamKey]} triggerFetch={() => {fetchStatus()}} />
             </div>
         )
     }
 
+    const addRepublishDestination = (stream: RTMPStreamStruct): void => {
+        const streamKey = stream.src_stream
+        setInProgress(true)
+        api?.createRepublishStream(streamKey, stream).then(fetchStatus).finally(() => setInProgress(false))
+    }
+
     return (
         <Card fluid>
+            
             <Card.Content header="RTMP Stream Republishing" />
+            
+            <Card.Content>
+                <AddRepublishDestination invalidStreamKeys={currentStreamKeys} onCreate={addRepublishDestination} />
+                <Loader active={inProgress} />
+            </Card.Content>
             <Card.Content>
                {streamInfoElements}
             </Card.Content>

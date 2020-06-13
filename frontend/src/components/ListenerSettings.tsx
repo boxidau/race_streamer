@@ -4,7 +4,7 @@ import { StreamEndpointStruct } from '../api/ServerAPI'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Card, Button, Form, Input } from 'semantic-ui-react'
 
-function RTMPSettings(): React.ReactElement {
+function ListenerSettings(): React.ReactElement {
 
     const { api } = React.useContext(APIContext)
     const [streamEndpoint, setStreamEndpoint] = React.useState<null | StreamEndpointStruct>(null)
@@ -24,7 +24,7 @@ function RTMPSettings(): React.ReactElement {
                 return
             }
 
-            api?.setStreamEndpoint({
+            api?.setListener({
                 StreamEndpoint: {
                     ...currentParams,
                     port: parseInt(port)
@@ -37,7 +37,7 @@ function RTMPSettings(): React.ReactElement {
 
     React.useEffect(
         () => {
-            api?.getStreamEndpoint().then(r => {
+            api?.getListener().then(r => {
                 setStreamEndpoint(r)
                 setPort(r.StreamEndpoint.port.toString())
             })
@@ -68,4 +68,4 @@ function RTMPSettings(): React.ReactElement {
     )
 }
 
-export default RTMPSettings
+export default ListenerSettings

@@ -26,9 +26,7 @@ function ServerConnection(): React.ReactElement {
                 {api?.serverURI()}
             </Menu.Item>
             <Menu.Item>
-                <Button color="red" size="small" onClick={disconnect}>
-                    Disconnect
-                </Button>
+                <Button color="red" size="tiny" onClick={disconnect} content="Disconnect" />
             </Menu.Item>
         </Menu.Menu>
     )
