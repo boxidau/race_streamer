@@ -2,17 +2,17 @@ import React from 'react';
 import './App.css';
 import Setup from './components/Setup'
 import ServerInfo from './components/ServerInfo'
-import type { ServerConfig, ServerProto } from './api/ServerAPI'
+import type { ServerConfig } from './api/ServerAPI'
 import ServerAPI from './api/ServerAPI'
 import APIContext from './api/APIContext';
 
 function App() {
 
   const loadSavedServerConfig = (): ServerConfig | null => {
-    let config = null;
     try {
       const savedConfigRaw = window.localStorage.getItem('serverInformation')
-      const savedConfig = JSON.parse(savedConfigRaw ?? "")
+      if (savedConfigRaw == null) return null
+      const savedConfig = JSON.parse(savedConfigRaw)
       if (typeof (savedConfig) !== "object") return null
       if (
         typeof (savedConfig.host) !== "string"

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, Menu, Icon } from 'semantic-ui-react'
 import APIContext from '../api/APIContext'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function ServerConnection(): React.ReactElement {
     const {api, disconnect} = React.useContext(APIContext)
