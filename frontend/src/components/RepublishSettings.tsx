@@ -22,7 +22,7 @@ function RepublishSettings(): React.ReactElement {
             fetchStatus()
             const timer = window.setInterval(fetchStatus, 3000)
             return () => {clearInterval(timer)}   
-        }
+        }, [api]
     )
 
     const streamInfoElements = []
