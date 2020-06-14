@@ -139,8 +139,10 @@ class ServerAPI {
     }
 
     async connectionCheck(): Promise<boolean> {
-        const status = await this._fetchSigned("GET", "/")
-        const response = await status.json()
+        const rawResponse = await this._fetchSigned("GET", "/")
+        if (rawResponse.status != 200) return false
+
+        const response = await rawResponse.json()
         if ("connection" in response && response["connection"] === true) {
             return true
         }

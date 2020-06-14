@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Modal, Form } from 'semantic-ui-react'
+import { Button, Modal, Form, Checkbox, Message } from 'semantic-ui-react'
 import type { ServerProto, ServerConfig } from '../api/ServerAPI'
 import ServerAPI from '../api/ServerAPI'
 
@@ -18,6 +18,7 @@ function Setup(props: Props): React.ReactElement {
     const [proto, setProto] = React.useState<ServerProto>("http")
     const [status, setStatus] = React.useState<ConnectionCheckStatus>(null)
     const [errorMessage, setErrorMessage] = React.useState<null | string>(null)
+    const [remember, setRemember] = React.useState(true)
 
     const checkConnection = () => {
         setStatus("IN_PROGRESS")
@@ -26,23 +27,36 @@ function Setup(props: Props): React.ReactElement {
         api.connectionCheck()
             .then(r => {
                 if (r) {
+                    if (remember) {
+                        window.localStorage.setItem('serverInformation', JSON.stringify(config))
+                    }
                     props.onSetServer(config)
                     return
                 }
+                setErrorMessage("Check authentication key details")
                 setStatus("FAILED")
 
             })
-            .catch(ex => {
-                setErrorMessage(ex)
+            .catch((ex: Error) => {
+                setErrorMessage(ex.message)
                 setStatus("FAILED")
             })
     }
-    
+
+    const connectionError = errorMessage != null ? (
+        <Message negative>
+            <Message.Header>Unable to connect</Message.Header>
+            <p>{errorMessage}</p>
+        </Message>
+        ) : <div />
+        
+
     return (
         <Modal open size="small" basic>
             <Modal.Header>Connect to stream server</Modal.Header>
             <Modal.Content>
-                <Modal.Description>
+                {connectionError}
+                <Modal.Description>        
                     <Form>
                         <Form.Field>
                             <Form.Input
@@ -88,6 +102,11 @@ function Setup(props: Props): React.ReactElement {
                                 type="text"
                             />
                         </Form.Field>
+                        <Checkbox
+                            label="Remember connection information"
+                            checked={remember}
+                            onChange={() => {setRemember(!remember)}} 
+                        />
                     </Form>
                 </Modal.Description>
             </Modal.Content>

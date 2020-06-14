@@ -2,16 +2,37 @@ import React from 'react';
 import './App.css';
 import Setup from './components/Setup'
 import ServerInfo from './components/ServerInfo'
-import type { ServerConfig, ServerProto} from './api/ServerAPI'
+import type { ServerConfig, ServerProto } from './api/ServerAPI'
 import ServerAPI from './api/ServerAPI'
 import APIContext from './api/APIContext';
 
 function App() {
 
-  const defaultServer = null
-  const [serverConfig, setServerConfig] = React.useState<ServerConfig | null>(defaultServer);
+  const loadSavedServerConfig = (): ServerConfig | null => {
+    let config = null;
+    try {
+      const savedConfigRaw = window.localStorage.getItem('serverInformation')
+      const savedConfig = JSON.parse(savedConfigRaw ?? "")
+      if (typeof (savedConfig) !== "object") return null
+      if (
+        typeof (savedConfig.host) !== "string"
+        || typeof (savedConfig.port) !== "number"
+        || (savedConfig.proto !== "http" && savedConfig.proto !== "https")
+        || typeof (savedConfig.authKey) !== "string"
+      ) {
+        return null
+      }
+      return savedConfig as ServerConfig
+    } catch {
+      return null
+    }
+   
+  }
+
+  const [serverConfig, setServerConfig] = React.useState<ServerConfig | null>(loadSavedServerConfig());
 
   const disconnect = () => {
+    window.localStorage.removeItem('serverInformation')
     setServerConfig(null)
   }
 
@@ -27,7 +48,7 @@ function App() {
   } else {
     api = new ServerAPI(serverConfig)
     display = (
-      <APIContext.Provider value={{api, disconnect}}>
+      <APIContext.Provider value={{ api, disconnect }}>
         <ServerInfo />
       </APIContext.Provider>
     )
