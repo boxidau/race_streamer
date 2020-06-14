@@ -12,12 +12,15 @@ function RepublishSettings(): React.ReactElement {
     const [publishInfo, setPublishInfo] = React.useState<null | RTMPPublisherInfoStruct>(null)
     const [inProgress, setInProgress] = React.useState(false)
 
-    const fetchStatus = () => api?.getRepublishInfo().then(setPublishInfo)
+    const fetchStatus = () => api?.getRepublishInfo().then((r) => {
+        setPublishInfo(r)
+        setInProgress(false)
+    })
 
     React.useEffect(
         () => {
             fetchStatus()
-            const timer = window.setInterval(fetchStatus, 5000)
+            const timer = window.setInterval(fetchStatus, 3000)
             return () => {clearInterval(timer)}
             
         }, [api]
@@ -37,7 +40,7 @@ function RepublishSettings(): React.ReactElement {
     const addRepublishDestination = (stream: RTMPStreamStruct): void => {
         const streamKey = stream.src_stream
         setInProgress(true)
-        api?.createRepublishStream(streamKey, stream).then(fetchStatus).finally(() => setInProgress(false))
+        api?.createRepublishStream(streamKey, stream).then(fetchStatus)
     }
 
     return (

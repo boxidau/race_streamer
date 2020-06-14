@@ -11,7 +11,7 @@ from typing import List
 
 
 app = Flask(__name__)
-app.config.from_envvar('CONFIG_FILE')
+app.config.from_envvar("CONFIG_FILE")
 CORS(app)
 hmac = hmac_auth.Hmac(app)
 
@@ -30,6 +30,7 @@ def idx(data: any, path: List[str], default: any = None):
             return default
     return n
 
+
 @app.route("/")
 @hmac.auth()
 def connection_check():
@@ -42,7 +43,7 @@ def status():
     return api.server_status()
 
 
-@app.route("/listener", methods=['GET', 'POST'])
+@app.route("/listener", methods=["GET", "POST"])
 @hmac.auth()
 def rtmp_settings():
     if request.method == "POST":
@@ -51,28 +52,19 @@ def rtmp_settings():
         if port and isinstance(port, int):
             api.update_rtmp_port(port)
 
-
     rtmp_settings = api.rtmp_settings()
     return {
         "StreamEndpoint": {
             "port": idx(rtmp_settings, ["RtmpSettings", "interfaces", 0, "port"], 0),
             "path": idx(rtmp_settings, ["RtmpSettings", "apps", 0, "app"], ""),
-            "proto": "rtmps" if idx(rtmp_settings, ["RtmpSettings", "interfaces", 0, "ssl"], False) else "rtmp",
+            "proto": "rtmps"
+            if idx(rtmp_settings, ["RtmpSettings", "interfaces", 0, "ssl"], False)
+            else "rtmp",
         }
     }
 
-@app.route('/rtmp_publish_settings', methods=["GET", "POST"])
-@hmac.auth()
-def rtmp_publish_settings():
-    if request.method == "POST":
-        data = request.get_json()
-    
-    rtmp_rules = defaultdict(list)
-    for rule in api.rtmp_publish_settings():
-        rtmp_rules[rule["src_stream"]].append(rule)
-    return rtmp_rules
 
-@app.route('/streams')
+@app.route("/streams")
 @hmac.auth()
 def stream_info():
     flat_data = {}
@@ -87,7 +79,7 @@ def stream_info():
         if data["rule"]["src_stream"] not in output_data:
             output_data[data["rule"]["src_stream"]] = {
                 "republish_streams": {},
-                "incoming_stream_stats": None
+                "incoming_stream_stats": None,
             }
         output_data[data["rule"]["src_stream"]]["republish_streams"][rule_id] = data
 
@@ -103,6 +95,7 @@ def stream_info():
                 output_data[stream["strm"]]["incoming_stream_stats"] = stream
 
     return output_data
+
 
 @app.route("/streams/<string:stream_key>", methods=["GET", "DELETE", "POST"])
 @hmac.auth()
@@ -139,7 +132,7 @@ def stream(stream_key):
             if not isinstance(data[field[0]], field[1]):
                 return {"error": f"Field {field[0]} should be a {field[1]}"}
             stream[field[0]] = data[field[0]]
-        
+
         if api.create_republish_rule(stream):
             return stream
         return {"error": "Unable to save rule"}
@@ -149,25 +142,21 @@ def stream(stream_key):
 
     return stream_key
 
+
 @app.route("/streams/<string:stream_key>/<string:rule_key>", methods=["DELETE"])
 @hmac.auth()
 def stream_rule_delete(stream_key, rule_key):
     return {"OK": api.delete_republish_rule(stream_key, rule_key)}
 
 
-
-@app.route("/rules")
-@hmac.auth()
-def rules():
-    return api.rules_config()
-
-
 @app.route("/reload")
+@hmac.auth()
 def reload_config():
     return {"status": "OK" if api.reload_config() else "FAILURE"}
 
 
 @app.route("/config", methods=["DELETE"])
+@hmac.auth()
 def reset():
     response = api.reset_rules_config()
     return "OK" if response else "failure"
