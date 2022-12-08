@@ -4,19 +4,19 @@
 #
 #    pip-compile requirements.in
 #
-certifi==2020.4.5.2
+certifi==2022.12.7
     # via requests
 chardet==3.0.4
     # via requests
 click==7.1.2
     # via flask
-flask-cors==3.0.8
-    # via -r requirements.in
 flask==1.1.2
     # via
     #   -r requirements.in
     #   flask-cors
     #   flaskhmac
+flask-cors==3.0.8
+    # via -r requirements.in
 flaskhmac==1.2.1
     # via -r requirements.in
 idna==2.9
